@@ -98,44 +98,27 @@ def depthFirstSearch(problem):
     print(startingNode)
     if problem.isGoalState(startingNode): #start is goal
         return []
-
     #import stack
     stack = util.Stack()
-    
-    #solution
-    solution = []
     #visited node
     visited = []
     #push start node to stack
     stack.push((startingNode,[]))
     
-    #loop when stack not empty and goal not reach
-    
-    while stack.isEmpty() != True:
-        #pop the top of stack
-        node, path = stack.pop()
-        if node not in visited:
-            #mark the node as visited
-            visited.append(node)
-            #check if this node is goal
-            if problem.isGoalState(node):
-                #print(actions)
-                return path
-            #push successor step to stack
-            for i in problem.getSuccessors(node):
-                add = True
-                for j in visited:
-                    if i == j:
-                        add = False
-                if add:
-                    actionSuccess = path + [i[1]]
-                    stack.push((i[0], actionSuccess))
-
-                    #current state
-                    lastnode = stack.list[-1]
-                    currentState = lastnode
-                    print(currentState)
-
+    #loop stack not empty and goal not reach
+    while stack.isEmpty() != True :
+        #check the most recently push
+        currentState, CurrMove = stack.pop()
+        if currentState not in visited:
+            #if this node not visited the mark it visited
+            visited.append(currentState)
+            #if this node is goal
+            if problem.isGoalState(currentState):
+                return CurrMove
+            else:
+                #list all possible successor node
+                for i in problem.getSuccessors(currentState):
+                    stack.push((i[0], CurrMove + [i[1]]))
     util.raiseNotDefined()
 
 def breadthFirstSearch(problem):
