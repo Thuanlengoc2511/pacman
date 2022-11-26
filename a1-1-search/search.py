@@ -87,11 +87,11 @@ def depthFirstSearch(problem):
     print("Start's successors:", problem.getSuccessors(problem.getStartState()))
     """
     "*** YOUR CODE HERE ***"
-    from game import Directions
-    s = Directions.SOUTH
-    w = Directions.WEST
-    n = Directions.NORTH
-    e = Directions.EAST
+    # from game import Directions
+    # s = Directions.SOUTH
+    # w = Directions.WEST
+    # n = Directions.NORTH
+    # e = Directions.EAST
 
     #start node
     startingNode = problem.getStartState()
@@ -118,17 +118,67 @@ def depthFirstSearch(problem):
             else:
                 #list all possible successor node
                 for i in problem.getSuccessors(currentState):
-                    stack.push((i[0], CurrMove + [i[1]]))
+                    if i not in visited:
+                        stack.push((i[0], CurrMove + [i[1]]))
     util.raiseNotDefined()
 
 def breadthFirstSearch(problem):
     """Search the shallowest nodes in the search tree first."""
     "*** YOUR CODE HERE ***"
+    #start node
+    startingNode = problem.getStartState()
+    print(startingNode)
+    if problem.isGoalState(startingNode): #start is goal
+        return []
+    #import queue
+    queue = util.Queue()
+    #visited node
+    visited = []
+    queue.push((startingNode, []))
+
+    #loop
+    while queue.isEmpty() != True:
+        currState, currMove = queue.pop()
+        if currState not in visited:
+            visited.append(currState)
+            if problem.isGoalState(currState):
+                return currMove
+            else:
+                for i in problem.getSuccessors(currState):
+                    if i not in visited:
+                        queue.push((i[0], currMove + [i[1]]))
     util.raiseNotDefined()
 
 def uniformCostSearch(problem):
     """Search the node of least total cost first."""
     "*** YOUR CODE HERE ***"
+    #start node
+    startingNode = (problem.getStartState(), [], 0)
+    print(startingNode)
+    if problem.isGoalState(startingNode): #start is goal
+        return []
+    #import queue
+    queue = util.PriorityQueue()
+    #visited node
+    visited = {}
+    queue.push(startingNode, 0)
+
+    #loop
+    while queue.isEmpty() != True:
+        currState, currMove, currCost = queue.pop()
+        if currState not in visited or currCost < visited[currState]: 
+            visited[currState] = currCost
+            if problem.isGoalState(currState):
+                return currMove
+            else:
+                for i in problem.getSuccessors(currState):
+                    if i not in visited:
+                        bestAction = currMove + [i[1]]
+                        bestCost = currCost + i[2]
+                        BestNode = (i[0], bestAction, bestCost)
+                        # queue.push(BestNode, bestCost)
+                        queue.update(BestNode, bestCost)
+
     util.raiseNotDefined()
 
 def nullHeuristic(state, problem=None):
@@ -141,6 +191,35 @@ def nullHeuristic(state, problem=None):
 def aStarSearch(problem, heuristic=nullHeuristic):
     """Search the node that has the lowest combined cost and heuristic first."""
     "*** YOUR CODE HERE ***"
+
+    #start node 
+    startingNode = (problem.getStartState(), [], 0)
+    print(startingNode)
+    if problem.isGoalState(startingNode): #start is goal
+        return []
+    #import queue
+    queue = util.PriorityQueue()
+    #visited node
+    visited = {}
+    queue.push(startingNode, 0)
+
+    #loop
+    while queue.isEmpty() != True:
+        currState, currMove, currCost = queue.pop()
+        if currState not in visited or currCost < visited[currState]: 
+            visited[currState] = currCost
+            if problem.isGoalState(currState):
+                return currMove
+            else:
+                for i in problem.getSuccessors(currState):
+                    if i not in visited:
+                        Action = currMove + [i[1]]
+                        Cost = currCost + i[2]
+                        totalCost = Cost + heuristic(i[0], problem)
+                        BestNode = (i[0], Action, Cost)
+                        # queue.push(BestNode, totalCost) #Test
+                        queue.update(BestNode, totalCost)
+
     util.raiseNotDefined()
 
 
